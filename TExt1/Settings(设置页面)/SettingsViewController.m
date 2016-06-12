@@ -85,7 +85,7 @@
     [self.largeScrollView addSubview:self.largeUIView];
     
     //Name TextView
-    self.nameTextView = [[UITextView alloc]initWithFrame:CGRectMake(0, 70, 375, 50)];
+    self.nameTextView = [[UITextView alloc]initWithFrame:CGRectMake(0, 70, ScreenWidth, 50)];
     //self.nameTextView.text = @"笑话小子";
     self.nameTextView.textAlignment = NSTextAlignmentCenter;
     self.nameTextView.font = [UIFont systemFontOfSize:17];
@@ -94,7 +94,7 @@
     [self.largeUIView addSubview:self.nameTextView];
     
     //Description Label
-    self.descriptionLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 102, 375, 12)];
+    self.descriptionLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 102, ScreenWidth, 12)];
     self.descriptionLabel.textAlignment = NSTextAlignmentCenter;
     self.descriptionLabel.font = [UIFont fontWithName:@"System - Italic" size:10];
     //self.descriptionLabel.text = @"写了21817字,获得231个喜欢";
@@ -103,7 +103,8 @@
     
     //注册HeaderView UIView
     self.barView = [[[NSBundle mainBundle]loadNibNamed:@"BarView" owner:self options:nil]lastObject];
-    self.barView.frame = CGRectMake(0, 130, 375, 40);
+    self.barView.frame = CGRectMake(0, 130, ScreenWidth, 40);
+    self.barView.center = CGPointMake(self.barView.width/2, self.barView.center.y);
     [self.largeUIView addSubview:self.barView];
     
     //创建SmallScrollView
@@ -113,7 +114,6 @@
     self.smallScrollView.bounces = NO;
     self.smallScrollView.alwaysBounceVertical = YES;
     self.smallScrollView.directionalLockEnabled = YES;
-    self.smallScrollView.backgroundColor = [UIColor grayColor];
     [self.largeUIView addSubview: self.smallScrollView];
     
     //在小的scrollerview里面添加2个tableview和一个view
@@ -131,17 +131,19 @@
     
     //UIView:设置
     self.profileUIView = [[[NSBundle mainBundle]loadNibNamed:@"ProfileUIView" owner:self options:nil]lastObject];
-    self.profileUIView.frame = CGRectMake(ScreenWidth*2, 0, ScreenWidth, self.profileUIView.size.height);
+    //UIView代码居中
+    self.profileUIView.frame = CGRectMake(ScreenWidth*2+(ScreenWidth-self.profileUIView.width)/2, 0, self.profileUIView.size.width, self.profileUIView.size.height);
+    self.smallScrollView.backgroundColor = self.profileUIView.backgroundColor;
     [self.smallScrollView addSubview:self.profileUIView];
     
     //white top bar
-    self.fakeNavigationBar = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 375, 65)];
+    self.fakeNavigationBar = [[UIView alloc]initWithFrame:CGRectMake(0, 0, ScreenWidth, 65)];
     self.fakeNavigationBar.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.fakeNavigationBar];
     [self.view bringSubviewToFront:self.fakeNavigationBar];
     
     //Profile Photo
-    self.imageView = [[UIImageView alloc]initWithFrame:CGRectMake(157, 35, 60, 60)];
+    self.imageView = [[UIImageView alloc]initWithFrame:CGRectMake(ScreenWidth/2-60/2, 35, 60, 60)];
     //self.imageView.image = [UIImage imageNamed:@"me.png"];
     self.imageView.layer.masksToBounds = YES;
     self.imageView.layer.cornerRadius = 30;
@@ -230,16 +232,15 @@
         frame.size.width = 35.5;
         self.imageView.frame = frame;
         self.imageView.layer.cornerRadius = 18;
-        self.imageView.center = CGPointMake(self.view.center.x, 40);
+        self.imageView.center = CGPointMake(ScreenWidth/2, 40);
     }];
 }
 
 -(void)imageMoveDown{
     [UIView animateWithDuration:0.5 animations:^{
-        self.imageView.frame = CGRectMake(157, 35, 60, 60);
+        self.imageView.frame = CGRectMake(ScreenWidth/2-60/2, 35, 60, 60);
         self.imageView.layer.masksToBounds = YES;
         self.imageView.layer.cornerRadius = 30;
-        
     }];
 }
 

@@ -10,17 +10,20 @@
 #import "WelcomeViewController.h"
 #import "HomeViewController.h"
 #import "User.h"
+#import "UIViewExt.h"
 #import <BmobSDK/Bmob.h>
 
 @implementation ProfileUIView
 
 - (void)awakeFromNib{
+    
     [self.loginButton addTarget:self action:@selector(loginAction) forControlEvents:UIControlEventTouchUpInside];
     [self.logoutButton addTarget:self action:@selector(logoutAction) forControlEvents:UIControlEventTouchUpInside];
     [self.nightButton addTarget:self action:@selector(nightAction) forControlEvents:UIControlEventTouchUpInside];
     [self.cleanMemoryButton addTarget:self action:@selector(cleanMemoryAction) forControlEvents:UIControlEventTouchUpInside];
     [self.reportButton addTarget:self action:@selector(reportAction) forControlEvents:UIControlEventTouchUpInside];
     [self.aboutUsButton addTarget:self action:@selector(aboutUsAction) forControlEvents:UIControlEventTouchUpInside];
+
 }
 
 -(void)loginAction{

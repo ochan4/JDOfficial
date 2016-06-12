@@ -15,4 +15,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *cleanMemoryButton;
 @property (weak, nonatomic) IBOutlet UIButton *reportButton;
 @property (weak, nonatomic) IBOutlet UIButton *aboutUsButton;
+@property (weak, nonatomic) IBOutlet UIView *logoutUIView;
+@property (weak, nonatomic) IBOutlet UIView *allButtonUIView;
+
 @end

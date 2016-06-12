@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "78449D2C61259CCCE9FB89A6DBDC3646F850003B",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "78449D2C61259CCCE9FB89A6DBDC3646F850003B" : 0,
+    "C477A79FE7082D98F9F8562505B635828F0A4743" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "05B163A6-B4C5-4A12-A5EA-77CCAC546DE1",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "78449D2C61259CCCE9FB89A6DBDC3646F850003B" : "TExt1\/",
+    "C477A79FE7082D98F9F8562505B635828F0A4743" : ""
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "TExt1",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "TExt1.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ochan4\/JDOfficial.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "78449D2C61259CCCE9FB89A6DBDC3646F850003B"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ochan4\/JokeDictionaryOfficial.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "C477A79FE7082D98F9F8562505B635828F0A4743"
+    }
+  ]
+}
