@@ -7,18 +7,24 @@
 //
 
 #import "LikedImageUIView.h"
-#import "DuanTableViewCell.h"
-#import "UserModel.h"
 
 @implementation LikedImageUIView
+
 #pragma mark - 全局常量
-static NSString * const RequestURL = @"http://apis.baidu.com/showapi_open_bus/showapi_joke/joke_pic";
-static NSString *apikey = @"a3497acf07bc5d1204952a5a3284b11d";
+static NSString *apiID = @"19882";
+static NSString *apiSign = @"c0b134be7ee64269a4b8b9ff6670188a";
 
 - (void)awakeFromNib {
-
-    [self setupTable];
+    [self setupTableView];
 }
+
+/*
+ -(void)viewWillAppear:(BOOL)animated{
+ [super viewWillAppear:animated];
+ 
+ [self.tableView reloadData];
+ }
+ */
 
 #pragma mark - UITableviewDatasource 数据源方法
 
@@ -36,11 +42,7 @@ static NSString *apikey = @"a3497acf07bc5d1204952a5a3284b11d";
     
     [self appearCell:cell andScale:2];
     
-    UserModel *user = [_tableData objectAtIndex:indexPath.row];
-    
-    [cell.img_content sd_setImageWithURL:[NSURL URLWithString:user.imagePath] placeholderImage:[UIImage imageNamed:@"loadingImage"]];
-    
-    [cell setIntroductionText:user.introduction];
+    cell.show = self.tableData[indexPath.row];
     
     self.cellHeight = cell.frame.size.height;
     
@@ -50,7 +52,6 @@ static NSString *apikey = @"a3497acf07bc5d1204952a5a3284b11d";
 #pragma mark - UITableviewDelegate 代理方法
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -77,127 +78,133 @@ static NSString *apikey = @"a3497acf07bc5d1204952a5a3284b11d";
 //上拉刷新 发送请求并获取数据方法
 - (void)loadData{
     
-    //实例化一个回调，处理请求的返回值
-    APISCallBack* callBack = [APISCallBack alloc];
+    NSString *path = [NSString stringWithFormat:@"http://route.showapi.com/255-1?showapi_appid=%@&showapi_sign=%@&page=%ld",apiID,apiSign,self.currentPage];
     
-    NSMutableDictionary *parameter = [[NSMutableDictionary alloc] init];
+    NSURL * url = [NSURL URLWithString:[path stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLFragmentAllowedCharacterSet]]];
     
-    [parameter setObject:@(self.pn).stringValue forKey:@"page"];
+    NSString *str = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
     
-    //请求API
-    [ApiStoreSDK executeWithURL:RequestURL method:@"GET" apikey:apikey parameter:parameter callBack:callBack];
+    NSData* plistData = [str dataUsingEncoding:NSUTF8StringEncoding];
     
-    callBack.onSuccess = ^(long status, NSString* responseString) {
-        
-        if(responseString != nil) {
+    NSDictionary *mainDic = [NSJSONSerialization JSONObjectWithData:plistData options:NSJSONReadingMutableContainers error:nil];
+    
+    NSDictionary *showapi_res_body = mainDic[@"showapi_res_body"];
+    
+    NSDictionary *pagebean = showapi_res_body[@"pagebean"];
+    
+    NSArray *contentlist = pagebean[@"contentlist"];
+    
+    if (mainDic) {
+        for (NSDictionary *dic in contentlist) {
             
-            NSData* plistData = [responseString dataUsingEncoding:NSUTF8StringEncoding];
+            ShowModel *show = [ShowModel new];
             
-            NSError *error = nil;
-            
-            NSDictionary *mainDic = [NSJSONSerialization JSONObjectWithData:plistData options:NSJSONReadingMutableContainers error:&error];
-            
-            NSDictionary *bodyDic = mainDic[@"showapi_res_body"];
-            
-            NSArray *contentlistArr = bodyDic[@"contentlist"];
-            
-            for (NSDictionary *contentDic in contentlistArr) {
+            if (dic[@"image0"]) {
                 
-                UserModel *user = [UserModel new];
+                show.imagePath = dic[@"image0"];
                 
-                [user setIntroduction:contentDic[@"title"]];
+            }else if (dic[@"video_uri"]) {
                 
-                user.imagePath = contentDic[@"img"];
+                show.video_uri = dic[@"video_uri"];
                 
-                [self.tableData addObject:user];
             }
+            show.content = dic[@"text"];
+            show.love = [NSString stringWithFormat:@" %@",dic[@"love"]];
+            show.hate = [NSString stringWithFormat:@" %@",dic[@"hate"]];
+            show.create_time = dic[@"create_time"];
+            
+            if ([self.tableData count]!=20) {
+                [self.tableData addObject:show];
+            }
+            
+            // 刷新数据（若不刷新数据会显示不出）
+            [self.tableView reloadData];
+            [self.tableView.mj_header endRefreshing];
+            
         }
-        // 刷新数据（若不刷新数据会显示不出）
-        [self.tableView reloadData];
-        [self.tableView.mj_header endRefreshing];
-    };
-    callBack.onError = ^(long status, NSString* responseString) {
+    }else{
+        
         NSLog(@"onError");
+        
         [self.tableView.mj_header endRefreshing];
-    };
+        
+    }
     
-    callBack.onComplete = ^() {
-        NSLog(@"onComplete");
-    };
 }
 
 //下拉加载 更新页码并获取数据方法
 - (void)loadMoreData{
     
-    //实例化一个回调，处理请求的返回值
-    APISCallBack* callBack = [APISCallBack alloc];
+    NSString *path = [NSString stringWithFormat:@"http://route.showapi.com/255-1?showapi_appid=%@&showapi_sign=%@&page=%ld",apiID,apiSign,++self.currentPage];
     
-    NSMutableDictionary *parameter = [[NSMutableDictionary alloc] init];
+    NSURL * url = [NSURL URLWithString:[path stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLFragmentAllowedCharacterSet]]];
     
-    [parameter setObject:@(++self.pn).stringValue forKey:@"page"];
+    NSString *str = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
     
-    //请求API
-    [ApiStoreSDK executeWithURL:RequestURL method:@"GET" apikey:apikey parameter:parameter callBack:callBack];
+    NSData* plistData = [str dataUsingEncoding:NSUTF8StringEncoding];
     
-    callBack.onSuccess = ^(long status, NSString* responseString) {
+    NSDictionary *mainDic = [NSJSONSerialization JSONObjectWithData:plistData options:NSJSONReadingMutableContainers error:nil];
+    
+    NSDictionary *showapi_res_body = mainDic[@"showapi_res_body"];
+    
+    NSDictionary *pagebean = showapi_res_body[@"pagebean"];
+    
+    NSArray *contentlist = pagebean[@"contentlist"];
+    
+    if (mainDic) {
         
-        if(responseString != nil) {
+        for (NSDictionary *dic in contentlist) {
             
-            NSData* plistData = [responseString dataUsingEncoding:NSUTF8StringEncoding];
+            ShowModel *show = [ShowModel new];
             
-            NSError *error = nil;
-            
-            NSDictionary *mainDic = [NSJSONSerialization JSONObjectWithData:plistData options:NSJSONReadingMutableContainers error:&error];
-            
-            NSDictionary *bodyDic = mainDic[@"showapi_res_body"];
-            
-            NSArray *contentlistArr = bodyDic[@"contentlist"];
-            
-            for (NSDictionary *contentDic in contentlistArr) {
+            if (dic[@"image0"]) {
                 
-                UserModel *user = [UserModel new];
+                show.imagePath = dic[@"image0"];
                 
-                [user setIntroduction:contentDic[@"title"]];
+            }else if (dic[@"video_uri"]) {
                 
-                user.imagePath = contentDic[@"img"];
+                show.video_uri = dic[@"video_uri"];
                 
-                [self.tableData addObject:user];
             }
+            show.content = dic[@"text"];
+            show.love = [NSString stringWithFormat:@" %@",dic[@"love"]];
+            show.hate = [NSString stringWithFormat:@" %@",dic[@"hate"]];
+            show.create_time = dic[@"create_time"];
+            
+            [self.tableData addObject:show];
+            
+            // 刷新数据（若不刷新数据会显示不出）
+            [self.tableView reloadData];
+            [self.tableView.mj_footer endRefreshing];
         }
-        // 刷新数据（若不刷新数据会显示不出）
-        [self.tableView reloadData];
-        [self.tableView.mj_footer endRefreshing];
-    };
-    callBack.onError = ^(long status, NSString* responseString) {
+        
+    }else{
+        
         NSLog(@"onError");
+        
         [self.tableView.mj_footer endRefreshing];
-    };
+        
+    }
     
-    callBack.onComplete = ^() {
-        NSLog(@"onComplete");
-    };
 }
 
 #pragma mark - 页面初始化加载
 
--(void)setupTable{
+-(void)setupTableView{
     
-    self.pn = 1;
+    self.currentPage = 1;
     
     self.tableData = [NSMutableArray array];
-    
-    self.backgroundColor = [UIColor purpleColor];
     
     self.tableView = [[UITableView alloc]initWithFrame:self.bounds];
     _tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
     _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableView.delegate = self;
     _tableView.dataSource = self;
-    _tableView.backgroundColor = [UIColor grayColor];;
     [self addSubview:_tableView];
     
     [_tableView registerClass:[DuanTableViewCell class] forCellReuseIdentifier:@"cell"];
-    _tableView.backgroundColor = [UIColor lightTextColor];
+    _tableView.backgroundColor = [UIColor clearColor];
     
     // 头部刷新控件
     self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadData)];
@@ -206,6 +213,5 @@ static NSString *apikey = @"a3497acf07bc5d1204952a5a3284b11d";
     // 尾部刷新控件
     self.tableView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
 }
-
 
 @end

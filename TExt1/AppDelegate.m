@@ -7,8 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "ViewController.h"
-#import "ImageViewController.h"
+#import "Joke(段子)/Controller/ViewController.h"
 #import "SettingsViewController.h"
 #import "EATheme.h"
 #import <BmobSDK/Bmob.h>
@@ -31,16 +30,12 @@
     ViewController *vc = [ViewController new];
     vc.title = @"段子";
     
-    ImageViewController *ivc = [ImageViewController new];
-    ivc.title = @"趣图";
-    
     SettingsViewController *svc = [SettingsViewController new];
     svc.title = @"个人";
     
     UITabBarController *tabbar = [UITabBarController new];
     
     [tabbar addChildViewController:[[UINavigationController alloc]initWithRootViewController:vc]];
-    [tabbar addChildViewController:[[UINavigationController alloc]initWithRootViewController:ivc]];
     [tabbar addChildViewController:[[UINavigationController alloc]initWithRootViewController:svc]];
     
     self.window.rootViewController = tabbar;
@@ -51,6 +46,11 @@
         NSLog(@"有对象");
         NSLog(@"%@",[BmobUser getCurrentUser]);
     }
+    
+    UIImageView *iv = [[UIImageView alloc]initWithFrame:self.window.bounds];
+    iv.image = [UIImage imageNamed:@"MenuBackground@2x.png"];
+    [tabbar.view addSubview:iv];
+    [tabbar.view sendSubviewToBack:iv];
     
     return YES;
 }

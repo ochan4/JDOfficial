@@ -10,19 +10,19 @@
 #define PrefixHeader_pch
 
 #import "MJRefresh.h"
-#import "APIStoreSDK.h"
 #import "UIImageView+WebCache.h"
+#import "SDWebImageDownloader.h"
 #import <QuartzCore/QuartzCore.h>
-#import "SJAvatarBrowser.h"//放大图片
+#import "KrVideoPlayerController.h"
+#import <AVFoundation/AVFoundation.h>
 
-#define ImagesData [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/ImagesData.arch"]
+#define ScreenW [UIScreen mainScreen].bounds.size.width
+#define ScreenH [UIScreen mainScreen].bounds.size.height
 #define kScreenW [UIScreen mainScreen].bounds.size.width
 #define kScreenH [UIScreen mainScreen].bounds.size.height
-#define ButtonSize 40
-#define ButtonY self.frame.size.height-ButtonSize-5
-#define Content_bg_Width 355
-#define ImageWidth 240
-#define ImageHeight 180
+#define Content_bg_Width [UIScreen mainScreen].bounds.size.width*0.947
+#define ImageWidth [UIScreen mainScreen].bounds.size.height/3*1.4
+#define ImageHeight [UIScreen mainScreen].bounds.size.height/3
 #define NewFont [UIFont fontWithName:@"FZMiaoWuS-GB" size:18];
-
+#define ButtonSize Content_bg_Width/4
 #endif /* PrefixHeader_pch */

@@ -50,6 +50,7 @@
         [ac3 addAction:action3];
         [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:ac3 animated:YES completion:nil];
     }else{
+        
         //创建添加AlertController:
         UIAlertController *ac = [UIAlertController alertControllerWithTitle:@"提示" message:@"是否注销" preferredStyle:UIAlertControllerStyleActionSheet];
         

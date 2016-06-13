@@ -8,11 +8,10 @@
 
 #import "SettingsViewController.h"
 #import "BarView.h"
+#import "UIImageView+AFNetworking.h"
 #import "LikedImageUIView.h"
-#import "LikedTextUIView.h"
 #import "ProfileUIView.h"
 #import "UIViewExt.h"
-#import "UIImageView+AFNetworking.h"
 #import "User.h"
 #import <BmobSDK/Bmob.h>
 
@@ -33,7 +32,6 @@
 @property (nonatomic, strong)UILabel *descriptionLabel;
 @property (nonatomic, strong)BarView *barView;
 @property (nonatomic, strong)LikedImageUIView *likedImageUIView;
-@property (nonatomic, strong)LikedTextUIView *likedTextUIView;
 @property (nonatomic, strong)ProfileUIView *profileUIView;
 @property (nonatomic, strong)User *user;
 @end
@@ -52,8 +50,6 @@
     
     //监听BarView里的按钮
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(likeImageNoti:) name:@"喜欢的图片监听" object:nil];
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(likeTextNoti:) name:@"喜欢的笑话监听" object:nil];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(profileNoti:) name:@"设置监听" object:nil];
     
@@ -108,7 +104,7 @@
     [self.largeUIView addSubview:self.barView];
     
     //创建SmallScrollView
-    self.smallScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 170, ScreenWidth, 700)];
+    self.smallScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 170, ScreenWidth, ScreenHeight-170+35)];
     self.smallScrollView.delegate = self;
     self.smallScrollView.pagingEnabled = YES;
     self.smallScrollView.bounces = NO;
@@ -117,22 +113,17 @@
     [self.largeUIView addSubview: self.smallScrollView];
     
     //在小的scrollerview里面添加2个tableview和一个view
-    self.smallScrollView.contentSize = CGSizeMake(ScreenWidth * 3, ScreenHeight);
+    self.smallScrollView.contentSize = CGSizeMake(ScreenWidth * 2, ScreenHeight);
     
     //UIView:图片
     self.likedImageUIView = [[[NSBundle mainBundle]loadNibNamed:@"LikedImageUIView" owner:self options:nil]lastObject];
-    self.likedImageUIView.frame = CGRectMake(0, 0, ScreenWidth, self.likedImageUIView.size.height);
+    self.likedImageUIView.frame = CGRectMake(0, 0, ScreenWidth, self.smallScrollView.height);
     [self.smallScrollView addSubview:self.likedImageUIView];
-    
-    //UIView:笑话
-    self.likedTextUIView = [[[NSBundle mainBundle]loadNibNamed:@"LikedTextUIView" owner:self options:nil]lastObject];
-    self.likedTextUIView.frame = CGRectMake(ScreenWidth, 0, ScreenWidth, self.likedTextUIView.size.height);
-    [self.smallScrollView addSubview:self.likedTextUIView];
     
     //UIView:设置
     self.profileUIView = [[[NSBundle mainBundle]loadNibNamed:@"ProfileUIView" owner:self options:nil]lastObject];
-    //UIView代码居中
-    self.profileUIView.frame = CGRectMake(ScreenWidth*2+(ScreenWidth-self.profileUIView.width)/2, 0, self.profileUIView.size.width, self.profileUIView.size.height);
+        //UIView代码居中
+    self.profileUIView.frame = CGRectMake(ScreenWidth+(ScreenWidth-self.profileUIView.width)/2, 0, self.profileUIView.size.width, self.smallScrollView.height);
     self.smallScrollView.backgroundColor = self.profileUIView.backgroundColor;
     [self.smallScrollView addSubview:self.profileUIView];
     
@@ -174,16 +165,9 @@
     [self imageMoveUp];
 }
 
--(void)likeTextNoti:(NSNotification *)noti{
-    
-    [self smallScrollViewMoveLeftRight:ScreenWidth];
-    [self largeScrollViewMoveUp];
-    [self imageMoveUp];
-}
-
 -(void)profileNoti:(NSNotification *)noti{
     
-    [self smallScrollViewMoveLeftRight:ScreenWidth*2];
+    [self smallScrollViewMoveLeftRight:ScreenWidth];
     [self largeScrollViewMoveUp];
     [self imageMoveUp];
 }

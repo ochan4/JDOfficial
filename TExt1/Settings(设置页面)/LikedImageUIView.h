@@ -7,13 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DuanTableViewCell.h"
+#import "ShowModel.h"
 
 @interface LikedImageUIView : UIView<UITableViewDataSource,UITableViewDelegate>
+
 @property(strong,nonatomic)UITableView* tableView;
 //存放数据模型的数组
 @property(strong,nonatomic)NSMutableArray *tableData;
 //计算cell的高度
 @property(nonatomic,assign)CGFloat cellHeight;
 //用于加载下一页的参数(页码)
-@property (nonatomic,assign) NSInteger pn;
+@property (nonatomic,assign) NSInteger currentPage;
 @end
